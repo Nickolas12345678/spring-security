@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .product-item {
+            background-color: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-item div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-item .product-image {
+            margin-bottom: 10px;
+        }
+
+        .product-item .product-name,
+        .product-item .product-price,
+        .product-item .product-category {
+            text-align: center;
+        }
+
+        .product-item span {
+            font-size: 16px;
+        }
+
+        .product-item .product-name {
+            font-weight: bold;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+        }
+
+        .product-item .product-name span {
+            color: #007BFF;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+        }
+
+        .product-item .product-price {
+            color: #007BFF;
+        }
+
+        .product-item .product-category {
+            color: #6c757d;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .pagination a:hover {
+            background-color: #0056b3;
+        }
+
+        .pagination a.disabled {
+            background-color: #cccccc;
+            pointer-events: none;
+        }
+
+        .add-product {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .add-product a {
+            text-decoration: none;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .add-product a:hover {
+            background-color: #218838;
+        }
+
+        .field-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Product List</h1>
+</header>
+
+<div class="container">
+    <form method="get" action="/products">
+        <div>
+            <label for="priceOrder">Sort by price:</label>
+            <select name="priceOrder" id="priceOrder">
+                <option value="asc" th:selected="${priceOrder == 'asc'}">Low to High</option>
+                <option value="desc" th:selected="${priceOrder == 'desc'}">High to Low</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="categoryId">Category:</label>
+            <select name="categoryId" id="categoryId">
+                <option value="" th:selected="${categoryId == null}">All</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"
+                        th:selected="${category.id == categoryId}"></option>
+            </select>
+        </div>
+
+        <div>
+            <label for="minPrice">Min Price:</label>
+            <input type="number" step="0.01" name="minPrice" id="minPrice" th:value="${minPrice}" />
+        </div>
+
+        <div>
+            <label for="maxPrice">Max Price:</label>
+            <input type="number" step="0.01" name="maxPrice" id="maxPrice" th:value="${maxPrice}" />
+        </div>
+
+        <button type="submit">Apply Filters</button>
+    </form>
+
+    <div>
+        <h2>Products</h2>
+        <ul class="product-list">
+            <li th:each="product : ${products}" class="product-item">
+                <div>
+                    <span class="field-name">Image</span>
+                    <img th:src="@{/images/{image}(image=${product.image})}" alt="Product image" style="width: 100px; height: auto;">
+                </div>
+                <div>
+                    <span class="field-name">Name</span>
+                    <span class="product-name" th:text="${product.name}"></span>
+                </div>
+                <div>
+                    <span class="field-name">Price</span>
+                    <span class="product-price" th:text="${product.price}"></span>
+                </div>
+                <div>
+                    <span class="field-name">Category</span>
+                    <span class="product-category" th:text="${product.category.name}"></span>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="pagination">
+        <a th:href="@{|/products?page=${currentPage - 1}&priceOrder=${priceOrder}&categoryId=${categoryId}&minPrice=${minPrice}&maxPrice=${maxPrice}|}"
+           th:class="${currentPage == 0 ? 'disabled' : ''}">
+            Previous
+        </a>
+        <a th:href="@{|/products?page=${currentPage + 1}&priceOrder=${priceOrder}&categoryId=${categoryId}&minPrice=${minPrice}&maxPrice=${maxPrice}|}"
+           th:class="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+            Next
+        </a>
+        <a th:href="@{|/products?page=${currentPage - 1}&priceOrder=${priceOrder}&categoryId=${categoryId}|}" th:class="${currentPage == 0 ? 'disabled' : ''}">Previous</a>
+        <a th:href="@{|/products?page=${totalPages - 1}&priceOrder=${priceOrder}&categoryId=${categoryId}|}" th:class="${currentPage == totalPages - 1 ? 'disabled' : ''}">Last</a>
+    </div>
+</div>
+</body>
+</html>
