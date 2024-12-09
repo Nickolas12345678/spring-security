@@ -18,7 +18,6 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Створюємо категорії
         Category electronics = new Category();
         electronics.setName("Електроніка");
         categoryService.saveCategory(electronics);
