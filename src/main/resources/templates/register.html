@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Register</title>
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+
+    .form-container {
+      background: #ffffff;
+      color: #333;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      width: 350px;
+      text-align: center;
+    }
+
+    .form-container h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #4CAF50;
+    }
+
+    .form-container label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      text-align: left;
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-container button:hover {
+      background: #45a049;
+    }
+
+    .form-container p {
+      color: red;
+      font-size: 14px;
+    }
+
+    .form-container a {
+      color: #4CAF50;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .form-container a:hover {
+      text-decoration: underline;
+    }
+
+    .form-container input:focus {
+      border-color: #4CAF50;
+      outline: none;
+      box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <h1>Register</h1>
+  <form th:action="@{/register}" method="post" th:object="${user}">
+    <label for="username">Username:</label>
+    <input type="text" id="username" th:field="*{username}" placeholder="Enter your username" required />
+    <label for="password">Password:</label>
+    <input type="password" id="password" th:field="*{password}" placeholder="Enter your password" required />
+    <button type="submit">Register</button>
+  </form>
+  <p th:if="${error}" th:text="${error}"></p>
+  <footer>
+    Already have an account? <a href="/login" th:href="@{/login}">Login here</a>
+  </footer>
+</div>
+</body>
+</html>
